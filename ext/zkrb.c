@@ -781,7 +781,11 @@ static VALUE method_zkrb_iterate_event_loop(VALUE self) {
   int fd=0, interest=0, events=0, rc=0, maxfd=0;
   struct timeval tv;
 
-  zookeeper_interest(zk->zh, &fd, &interest, &tv);
+  rc = zookeeper_interest(zk->zh, &fd, &interest, &tv);
+
+  if (rc != ZOK) {
+    rb_raise(rb_eRuntimeError, "zookeeper_interest failed: %d: %s", rc, zerror(rc));
+  }
 
   if (fd != -1) {
     if (interest & ZOOKEEPER_READ) {
@@ -831,7 +835,7 @@ static VALUE method_zkrb_iterate_event_loop(VALUE self) {
     zkrb_debug("timed out waiting for descriptor to be ready");
   }
   else {
-    log_err("select returned: %d", rc);
+    log_err("select returned: %d: %s", rc, clean_errno());
   }
 
   return INT2FIX(rc);
