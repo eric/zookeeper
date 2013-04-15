@@ -784,7 +784,7 @@ static VALUE method_zkrb_iterate_event_loop(VALUE self) {
   rc = zookeeper_interest(zk->zh, &fd, &interest, &tv);
 
   if (rc != ZOK) {
-    rb_raise(rb_eRuntimeError, "zookeeper_interest failed: %d: %s", rc, zerror(rc));
+    log_err("zookeeper_interest failed: %d: %s", rc, zerror(rc));
   }
 
   if (fd != -1) {
